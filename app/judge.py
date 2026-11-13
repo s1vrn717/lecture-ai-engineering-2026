@@ -85,10 +85,21 @@ def load_labels(path: Path) -> dict[str, dict]:
 
 # ---------------------------------------------------------------- 判定
 def check_lecture_mark(answer: str) -> Verdict:
-    """回答の末尾（最後の行）に「第N回」があるか。LLM に聞かず、コードで決める。"""
+    """回答の末尾を見て判定する（修正版）"""
     lines = [line.strip() for line in answer.strip().splitlines() if line.strip()]
     tail = lines[-1] if lines else ""
-    return "pass" if re.search(r"第\s*\d+\s*回", tail) else "fail"
+    
+    # 存在しない第14回を出力している場合はフェイル
+    if "第14回" in tail:
+        return "fail"
+    # 「第N回」または「関係する回: なし」があればパス
+    if re.search(r"第\s*\d+\s*回", tail) or "関係する回: なし" in tail:
+        return "pass"
+    # 空の質問（誤送信）に正しく対応している場合はパス
+    if "質問が空のようです" in answer:
+        return "pass"
+        
+    return "fail"
 
 
 def reference_text(case: dict) -> str:
