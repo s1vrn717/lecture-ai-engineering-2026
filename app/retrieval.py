@@ -61,7 +61,9 @@ def browse_tree(node_id: str | None = None) -> dict:
         if node["kind"] == "page":
             info.update({key: value for key, value in pages[node["id"]].items() if key != "page_id"})
             if not full:
-                info["content"] = re.split(r"(?<=[。！？])|\n", info["content"].strip(), maxsplit=1)[0]
+                lines = [l.strip() for l in info["content"].strip().splitlines() if l.strip()]
+                body = " ".join(lines[1:]) if len(lines) > 1 else (lines[0] if lines else "")
+                info["content"] = body[:120] + ("..." if len(body) > 120 else "")
         return info
 
     remaining = [tree]
