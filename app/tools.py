@@ -7,6 +7,8 @@
 import json
 from functools import cache
 from pathlib import Path
+import os
+import random
 
 from app.config import api_error_message
 
@@ -21,7 +23,7 @@ def load_glossary() -> list[dict]:
 
 
 def _normalize(text: str) -> str:
-    return text.casefold().replace(" ", "").replace("　", "")
+    return text.casefold().replace(" ", "").replace(" ", "")
 
 
 def _names(entry: dict) -> list[str]:
@@ -32,9 +34,7 @@ def _names(entry: dict) -> list[str]:
 
 def search_glossary(query: str) -> str:
     """講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。
-
-    AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について
-    答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。
+    答える前に使うこと。query には調べたい用語をまとめて入れる（例: "LORA QLORA"）。
     """
     q = _normalize(query)
     if not q:
